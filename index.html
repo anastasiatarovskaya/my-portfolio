@@ -563,7 +563,7 @@ function setLang(l) {
 function renderProjects() {
   const list = document.getElementById('proj-list');
   list.innerHTML = PROJECTS.map((p,i) => `
-    <a class="proj-row rv" href="project.html?id=${p.id}" style="transition-delay:${i*.06}s">
+    <a class="proj-row rv" href="${p.behance}" target="_blank" style="transition-delay:${i*.06}s">
       <div class="proj-l">
         <span class="proj-num">0${i+1}</span>
         <div>
