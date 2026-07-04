@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anastasiia Tarovska — UI/UX Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════
+   DESIGN TOKENS
+════════════════════════════════ */
+:root {
+  --bg:      #0D0D12;
+  --bg-card: #13131B;
+  --bg-h:    #17171F;
+  --b:       rgba(255,255,255,.08);
+  --b2:      rgba(255,255,255,.13);
+  --t1: #FFFFFF;
+  --t2: #B8B8C8;
+  --t3: #6B6B80;
+  --coral:   #FF6B4A;
+  --violet:  #A78BFA;
+  --emerald: #34D399;
+  --amber:   #FBBF24;
+  --serif: 'Syne', sans-serif;
+  --sans:  'Inter', system-ui, sans-serif;
+  --mono:  'Space Mono', monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--t1);-webkit-font-smoothing:antialiased;overflow-x:hidden;cursor:none;}
+a{color:inherit;text-decoration:none;}
+img{display:block;max-width:100%;}
+
+/* ── CURSOR ── */
+.cur{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;width:10px;height:10px;border-radius:50%;background:var(--coral);transform:translate(-50%,-50%);transition:width .25s,height .25s;}
+.cur.big{width:40px;height:40px;background:rgba(255,107,74,.15);border:1.5px solid rgba(255,107,74,.5);}
+@media(hover:none){.cur{display:none;}body{cursor:auto;}}
+
+/* ── SCROLL PROGRESS ── */
+#spb{position:fixed;top:0;left:0;height:2px;z-index:8000;width:0%;background:linear-gradient(90deg,var(--coral),var(--violet));pointer-events:none;transition:width .06s linear;}
+
+/* ── PRELOADER ── */
+#pl{position:fixed;inset:0;z-index:7000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .5s ease,visibility .5s ease;}
+#pl.out{opacity:0;visibility:hidden;}
+.pl-name{font-family:var(--serif);font-size:56px;font-weight:800;letter-spacing:-.02em;overflow:hidden;}
+.pl-name span{display:inline-block;opacity:0;transform:translateY(56px);animation:plr .6s cubic-bezier(.22,.61,.36,1) forwards;}
+.pl-name span:nth-child(2){color:var(--coral);animation-delay:.08s;}
+.pl-name span:nth-child(3){animation-delay:.16s;}
+.pl-name span:nth-child(4){animation-delay:.22s;}
+.pl-bw{width:100px;height:1px;background:var(--b2);overflow:hidden;}
+.pl-bf{height:100%;width:0;background:var(--coral);animation:plf 1s ease forwards .3s;}
+@keyframes plr{to{opacity:1;transform:none;}}
+@keyframes plf{to{width:100%;}}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;padding:0 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(13,13,18,.85);backdrop-filter:blur(18px);border-bottom:1px solid var(--b);}
+.logo{font-family:var(--serif);font-size:18px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:6px;}
+.logo-dot{width:6px;height:6px;border-radius:50%;background:var(--coral);}
+.nav-c{display:flex;align-items:center;gap:6px;}
+.nav-c a{font-size:13px;color:var(--t3);padding:5px 10px;border-radius:6px;transition:color .2s,background .2s;}
+.nav-c a:hover{color:var(--t1);background:rgba(255,255,255,.05);}
+.nav-cta{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding:8px 16px;border-radius:7px;background:var(--coral);color:#fff !important;transition:opacity .2s,transform .2s;}
+.nav-cta:hover{opacity:.85;transform:translateY(-1px);}
+
+/* lang switcher */
+.lang-sw{display:flex;gap:2px;margin-left:12px;padding:3px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid var(--b);}
+.lang-sw button{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.05em;padding:4px 8px;border-radius:5px;border:none;cursor:none;background:transparent;color:var(--t3);transition:all .2s;}
+.lang-sw button.on{background:var(--coral);color:#fff;}
+
+@media(max-width:768px){
+  nav{padding:0 20px;}
+  .nav-c a:not(.nav-cta){display:none;}
+  .lang-sw{margin-left:8px;}
+}
+
+/* ── HERO ── */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(rgba(255,255,255,.055) 1px,transparent 1px);background-size:30px 30px;mask-image:radial-gradient(ellipse 70% 60% at 50% 60%,black,transparent);}
+.hero-glow{position:absolute;top:-100px;right:-100px;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,74,.15),transparent 65%);pointer-events:none;}
+
+.hero-body{position:relative;z-index:2;padding:100px 48px 40px;}
+.hero-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:20px;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);}
+.avail{width:7px;height:7px;border-radius:50%;background:var(--emerald);box-shadow:0 0 8px var(--emerald);animation:av 2.5s ease-in-out infinite;}
+@keyframes av{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+.hero-title{font-family:var(--serif);font-weight:800;font-size:clamp(40px,6vw,76px);line-height:1.0;letter-spacing:-.02em;margin-bottom:0;}
+.hero-title .ln1{display:block;color:var(--t1);}
+.hero-title .ln2{display:block;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.2);}
+.hero-title .ln3{display:block;background:linear-gradient(95deg,var(--coral),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+.hero-foot{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:18px 48px;border-top:1px solid var(--b);background:rgba(13,13,18,.5);backdrop-filter:blur(10px);}
+.hero-desc{font-size:14px;line-height:1.7;color:var(--t2);max-width:380px;}
+.hero-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.btn{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:11px 20px;border-radius:8px;display:inline-flex;align-items:center;gap:6px;transition:all .2s;white-space:nowrap;}
+.btn-fill{background:var(--coral);color:#fff;}
+.btn-fill:hover{opacity:.87;transform:translateY(-1px);}
+.btn-ghost{border:1px solid var(--b2);color:var(--t2);}
+.btn-ghost:hover{border-color:rgba(255,255,255,.28);color:var(--t1);transform:translateY(-1px);}
+@media(max-width:768px){.hero-body{padding:80px 24px 30px;}.hero-foot{padding:16px 24px;}}
+
+/* ── TICKER ── */
+.ticker{border-top:1px solid var(--b);border-bottom:1px solid var(--b);overflow:hidden;padding:11px 0;background:rgba(255,255,255,.02);}
+.ticker-t{display:flex;white-space:nowrap;animation:tk 30s linear infinite;}
+.ticker-t span{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);padding:0 18px;}
+.ticker-t .sep{color:var(--coral);}
+@keyframes tk{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ── SECTION UTIL ── */
+.wrap{max-width:1140px;margin:0 auto;padding:0 48px;}
+@media(max-width:768px){.wrap{padding:0 24px;}}
+.sec-label{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--coral);margin-bottom:12px;}
+.sec-label::before{content:'';width:14px;height:1px;background:var(--coral);}
+.sec-title{font-family:var(--serif);font-weight:800;font-size:clamp(28px,4vw,52px);line-height:1.05;letter-spacing:-.02em;}
+
+/* ── WORK ── */
+.work{padding:88px 0 0;}
+.work-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:36px;flex-wrap:wrap;gap:12px;}
+.work-count{font-family:var(--mono);font-size:12px;color:var(--t3);}
+
+.proj-row{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-top:1px solid var(--b);transition:background .2s,padding-left .3s;position:relative;cursor:none;}
+.proj-row:last-child{border-bottom:1px solid var(--b);}
+.proj-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--coral);transform:scaleY(0);transform-origin:bottom;transition:transform .3s;}
+.proj-row:hover{background:var(--bg-h);padding-left:62px;}
+.proj-row:hover::before{transform:scaleY(1);}
+.proj-l{display:flex;align-items:center;gap:18px;}
+.proj-num{font-family:var(--mono);font-size:11px;color:var(--t3);width:24px;flex-shrink:0;}
+.proj-name{font-family:var(--serif);font-weight:700;font-size:clamp(16px,2.4vw,26px);letter-spacing:-.01em;transition:color .2s;}
+.proj-row:hover .proj-name{color:var(--coral);}
+.proj-sub{font-size:12px;color:var(--t3);margin-top:3px;}
+.proj-r{display:flex;align-items:center;gap:12px;}
+.ptag{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.04em;padding:3px 9px;border-radius:4px;}
+.ptag-c{background:rgba(255,107,74,.12);color:var(--coral);}
+.ptag-v{background:rgba(167,139,250,.12);color:var(--violet);}
+.ptag-e{background:rgba(52,211,153,.12);color:var(--emerald);}
+.ptag-a{background:rgba(251,191,36,.12);color:var(--amber);}
+.proj-arr{font-size:16px;color:var(--t3);transition:color .2s,transform .2s;}
+.proj-row:hover .proj-arr{color:var(--coral);transform:translateX(4px);}
+@media(max-width:768px){
+  .proj-row,.proj-row:hover{padding:16px 24px;padding-left:30px;}
+  .ptag{display:none;}
+}
+
+/* ── ABOUT ── */
+.about{padding:100px 0;}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;}
+.about-photo{border-radius:20px;overflow:hidden;background:var(--bg-card);border:1px solid var(--b);aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+.photo-ph{font-family:var(--serif);font-size:64px;font-weight:800;color:rgba(255,255,255,.06);}
+.photo-hint{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);}
+.about-text p{font-size:15px;line-height:1.82;color:var(--t2);margin-bottom:14px;}
+.about-text p:last-of-type{margin-bottom:28px;}
+.chips{display:flex;flex-wrap:wrap;gap:7px;}
+.chip{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding:6px 13px;border-radius:6px;border:1px solid var(--b2);color:var(--t2);transition:border-color .2s,color .2s;}
+.chip:hover{border-color:var(--coral);color:var(--t1);}
+.about-stats{display:flex;flex-direction:column;gap:10px;margin-top:28px;}
+.astat{background:var(--bg-card);border:1px solid var(--b);border-radius:12px;padding:20px 22px;display:flex;align-items:center;gap:16px;}
+.astat-val{font-family:var(--serif);font-weight:800;font-size:32px;line-height:1;background:linear-gradient(110deg,var(--coral),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;min-width:56px;}
+.astat-lbl{font-size:13px;color:var(--t3);}
+@media(max-width:900px){.about-grid{grid-template-columns:1fr;}.about-photo{aspect-ratio:16/9;}}
+
+/* ── PROCESS ── */
+.process{padding:0 0 100px;}
+.proc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:36px;}
+.pstep{background:var(--bg-card);border:1px solid var(--b);border-radius:14px;padding:26px 20px;transition:border-color .25s,transform .25s;position:relative;overflow:hidden;}
+.pstep:hover{border-color:var(--b2);transform:translateY(-3px);}
+.pstep::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity .3s;}
+.pstep:nth-child(1)::before{background:var(--coral);}
+.pstep:nth-child(2)::before{background:var(--violet);}
+.pstep:nth-child(3)::before{background:var(--emerald);}
+.pstep:nth-child(4)::before{background:var(--amber);}
+.pstep:hover::before{opacity:1;}
+.pn{font-family:var(--serif);font-size:38px;font-weight:800;color:rgba(255,255,255,.05);line-height:1;margin-bottom:16px;}
+.pstep h4{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:7px;}
+.pstep p{font-size:12.5px;line-height:1.7;color:var(--t3);}
+@media(max-width:880px){.proc-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:520px){.proc-grid{grid-template-columns:1fr;}}
+
+/* ── CONTACT ── */
+.contact{padding:0 48px 72px;}
+.contact-box{background:var(--bg-card);border:1px solid var(--b);border-radius:24px;padding:64px;position:relative;overflow:hidden;}
+.contact-box::after{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,74,.12),transparent 65%);pointer-events:none;}
+.contact-hl{font-family:var(--serif);font-weight:800;font-size:clamp(36px,5.5vw,80px);line-height:.92;letter-spacing:-.02em;margin:16px 0 48px;}
+.hl-w{display:block;color:var(--t1);}
+.hl-o{display:block;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.18);}
+.hl-c{display:block;color:var(--coral);}
+
+/* contact form */
+.contact-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.form-group label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);}
+.form-group input,.form-group textarea,.form-group select{background:rgba(255,255,255,.04);border:1px solid var(--b2);border-radius:8px;padding:11px 14px;font-family:var(--sans);font-size:14px;color:var(--t1);outline:none;transition:border-color .2s;width:100%;resize:none;}
+.form-group input::placeholder,.form-group textarea::placeholder{color:var(--t3);}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--coral);}
+.form-group textarea{min-height:120px;}
+.form-submit{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px;}
+.form-note{font-size:12px;color:var(--t3);}
+
+/* contact links */
+.c-links{display:flex;flex-direction:column;gap:14px;padding-top:8px;}
+.c-link{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--b);transition:border-color .2s,background .2s;}
+.c-link:hover{border-color:var(--b2);background:rgba(255,255,255,.06);}
+.c-link-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.ico-mail{background:rgba(255,107,74,.15);}
+.ico-tg{background:rgba(0,136,204,.2);}
+.ico-bh{background:rgba(23,119,242,.15);}
+.ico-li{background:rgba(10,102,194,.15);}
+.c-link-txt strong{display:block;font-size:13px;font-weight:500;color:var(--t1);}
+.c-link-txt span{font-size:12px;color:var(--t3);}
+.c-link-arr{margin-left:auto;color:var(--t3);font-size:14px;transition:transform .2s;}
+.c-link:hover .c-link-arr{transform:translateX(3px);color:var(--coral);}
+
+@media(max-width:900px){.contact-layout{grid-template-columns:1fr;}}
+@media(max-width:768px){.contact{padding:0 24px 56px;}.contact-box{padding:36px 24px;}}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--b);padding:18px 48px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--t3);flex-wrap:wrap;gap:8px;}
+@media(max-width:768px){footer{padding:16px 24px;}}
+
+/* ── REVEALS ── */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .65s ease,transform .65s ease;}
+.rv.in{opacity:1;transform:none;}
+.d1{transition-delay:.08s;}.d2{transition-delay:.16s;}.d3{transition-delay:.24s;}.d4{transition-delay:.32s;}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;}}
+</style>
+</head>
+<body>
+
+<!-- ════ PRELOADER ════ -->
+<div id="pl">
+  <div class="pl-name"><span>A</span><span>.</span><span>T</span><span>.</span></div>
+  <div class="pl-bw"><div class="pl-bf"></div></div>
+</div>
+<div id="spb"></div>
+<div class="cur" id="cur"></div>
+
+<!-- ════ NAV ════ -->
+<nav>
+  <div class="logo"><span class="logo-dot"></span>Anastasiia Tarovska</div>
+  <div class="nav-c">
+    <a href="#work" data-i18n="nav_work">Work</a>
+    <a href="#about" data-i18n="nav_about">About</a>
+    <a href="#contact" data-i18n="nav_contact">Contact</a>
+    <a href="#contact" class="nav-cta btn" data-i18n="nav_hire">Hire me →</a>
+    <div class="lang-sw">
+      <button onclick="setLang('en')" class="on" id="lb-en">EN</button>
+      <button onclick="setLang('ru')" id="lb-ru">RU</button>
+      <button onclick="setLang('ua')" id="lb-ua">UA</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ════ HERO ════ -->
+<section class="hero" id="top">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="hero-body">
+    <p class="hero-eyebrow">
+      <span class="avail"></span>
+      <span data-i18n="hero_label">UI/UX Designer · Open to projects</span>
+    </p>
+    <h1 class="hero-title">
+      <span class="ln1" data-i18n="hero_l1">Complex</span>
+      <span class="ln2" data-i18n="hero_l2">products.</span>
+      <span class="ln3" data-i18n="hero_l3">Simple solutions.</span>
+    </h1>
+  </div>
+  <div class="hero-foot">
+    <p class="hero-desc" data-i18n="hero_desc">I design interfaces for complex product systems and build visual identities for brands that need clarity.</p>
+    <div class="hero-btns">
+      <a href="#work" class="btn btn-fill" data-i18n="cta_work">View work →</a>
+      <a href="#about" class="btn btn-ghost" data-i18n="cta_about">About me</a>
+    </div>
+  </div>
+</section>
+
+<!-- ════ TICKER ════ -->
+<div class="ticker">
+  <div class="ticker-t" aria-hidden="true">
+    <span>UI/UX Design</span><span class="sep"> · </span><span>SaaS Platforms</span><span class="sep"> · </span><span>Visual Identity</span><span class="sep"> · </span><span>Dashboard Systems</span><span class="sep"> · </span><span>Web Design</span><span class="sep"> · </span><span>Figma</span><span class="sep"> · </span><span data-i18n="ticker_every">Every time</span><span class="sep"> · </span>
+    <span>UI/UX Design</span><span class="sep"> · </span><span>SaaS Platforms</span><span class="sep"> · </span><span>Visual Identity</span><span class="sep"> · </span><span>Dashboard Systems</span><span class="sep"> · </span><span>Web Design</span><span class="sep"> · </span><span>Figma</span><span class="sep"> · </span><span data-i18n="ticker_every">Every time</span><span class="sep"> · </span>
+  </div>
+</div>
+
+<!-- ════ WORK ════ -->
+<section class="work" id="work">
+  <div class="wrap">
+    <div class="work-head rv">
+      <div>
+        <p class="sec-label" data-i18n="work_label">Selected Work</p>
+        <h2 class="sec-title" data-i18n="work_title">Projects</h2>
+      </div>
+      <span class="work-count" data-i18n="work_count">05 projects</span>
+    </div>
+  </div>
+  <div id="proj-list">
+    <!-- Filled by JS -->
+  </div>
+</section>
+
+<!-- ════ ABOUT ════ -->
+<section class="about" id="about">
+  <div class="wrap">
+    <div class="about-grid">
+      <div>
+        <div class="about-photo">
+          <div class="photo-ph">AT</div>
+          <p class="photo-hint" data-i18n="photo_soon">Photo coming soon</p>
+        </div>
+      </div>
+      <div class="about-text">
+        <p class="sec-label" data-i18n="about_label">About me</p>
+        <h2 class="sec-title rv" style="margin-bottom:22px" data-i18n="about_title">Designer who turns complexity into clarity</h2>
+        <p class="rv d1" data-i18n="about_p1">I'm a UI/UX designer equally confident working with complex product systems (dashboards, SaaS platforms) and visual identity for brands and websites.</p>
+        <p class="rv d2" data-i18n="about_p2">I care about interfaces that are understood at first glance — no instructions needed. My approach is built on a precise grid, considered typography and solutions without visual noise.</p>
+        <p class="rv d3" data-i18n="about_p3">Beyond digital design, I'm interested in composition in physical form — I work with balloon art installations, building balance of shape and colour in space.</p>
+        <div class="chips rv d4">
+          <span class="chip">Figma</span><span class="chip">Design Systems</span><span class="chip">SaaS</span><span class="chip">Prototyping</span><span class="chip">Visual Identity</span><span class="chip">Web Design</span>
+        </div>
+        <div class="about-stats">
+          <div class="astat rv d1"><div class="astat-val" data-count="5" data-suffix="+">0</div><div class="astat-lbl" data-i18n="stat1">projects in portfolio</div></div>
+          <div class="astat rv d2"><div class="astat-val" data-count="3" data-suffix="">0</div><div class="astat-lbl" data-i18n="stat2">languages — EN · RU · UA</div></div>
+          <div class="astat rv d3"><div class="astat-val">∞</div><div class="astat-lbl" data-i18n="stat3">attention to detail</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ PROCESS ════ -->
+<section class="process">
+  <div class="wrap">
+    <p class="sec-label" data-i18n="proc_label">How I work</p>
+    <h2 class="sec-title rv" data-i18n="proc_title">Four steps to clarity</h2>
+    <div class="proc-grid">
+      <div class="pstep rv"><div class="pn">01</div><h4 data-i18n="p1h">Research & Structure</h4><p data-i18n="p1p">I dive into the task and build product logic and architecture before the first screens.</p></div>
+      <div class="pstep rv d1"><div class="pn">02</div><h4 data-i18n="p2h">Wireframes</h4><p data-i18n="p2p">I think through interface behaviour before it becomes beautiful.</p></div>
+      <div class="pstep rv d2"><div class="pn">03</div><h4 data-i18n="p3h">UI System</h4><p data-i18n="p3p">I build the visual system: grid, typography, components and states.</p></div>
+      <div class="pstep rv d3"><div class="pn">04</div><h4 data-i18n="p4h">Handoff & Polish</h4><p data-i18n="p4p">I refine every detail and hand off to development without losing meaning.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ CONTACT ════ -->
+<section id="contact" class="contact">
+  <div class="contact-box rv">
+    <p class="sec-label" data-i18n="contact_label">Ready to start?</p>
+    <h2 class="contact-hl">
+      <span class="hl-w" data-i18n="ch1">Let's</span>
+      <span class="hl-o" data-i18n="ch2">bring</span>
+      <span class="hl-c" data-i18n="ch3">order.</span>
+    </h2>
+    <div class="contact-layout">
+      <!-- FORM -->
+      <form id="contact-form" action="https://formspree.io/f/xgojrdpj" method="POST">
+        <input type="hidden" name="_subject" value="New message from portfolio">
+        <div class="form-group">
+          <label data-i18n="f_name">Your name</label>
+          <input type="text" name="name" placeholder="John Smith" required>
+        </div>
+        <div class="form-group">
+          <label data-i18n="f_email">Email</label>
+          <input type="email" name="email" placeholder="hello@company.com" required>
+        </div>
+        <div class="form-group">
+          <label data-i18n="f_msg">Message</label>
+          <textarea name="message" placeholder="Tell me about your project..." required></textarea>
+        </div>
+        <div class="form-submit">
+          <button type="submit" class="btn btn-fill" data-i18n="f_send">Send message →</button>
+          <span class="form-note" data-i18n="f_note">I reply within 24 hours</span>
+        </div>
+      </form>
+      <!-- LINKS -->
+      <div class="c-links">
+        <a href="mailto:anastasia.tarovskaya@gmail.com" class="c-link">
+          <div class="c-link-ico ico-mail">✉</div>
+          <div class="c-link-txt"><strong>Email</strong><span>anastasia.tarovskaya@gmail.com</span></div>
+          <span class="c-link-arr">→</span>
+        </a>
+        <a href="https://t.me/TaNasty" target="_blank" rel="noopener" class="c-link">
+          <div class="c-link-ico ico-tg">✈</div>
+          <div class="c-link-txt"><strong>Telegram</strong><span>@TaNasty</span></div>
+          <span class="c-link-arr">→</span>
+        </a>
+        <a href="https://www.behance.net/nastyashark" target="_blank" rel="noopener" class="c-link">
+          <div class="c-link-ico ico-bh">𝔹</div>
+          <div class="c-link-txt"><strong>Behance</strong><span>nastyashark</span></div>
+          <span class="c-link-arr">→</span>
+        </a>
+        <a href="https://www.linkedin.com/in/anastasiia-tarovska/" target="_blank" rel="noopener" class="c-link">
+          <div class="c-link-ico ico-li">in</div>
+          <div class="c-link-txt"><strong>LinkedIn</strong><span>Anastasiia Tarovska</span></div>
+          <span class="c-link-arr">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Anastasiia Tarovska</span>
+  <span data-i18n="footer_avail">Available for Freelance & Fulltime</span>
+</footer>
+
+<script>
+/* ══════════════════════════════════════════════
+   ✏️  РЕДАКТИРУЙ ЗДЕСЬ — проекты
+══════════════════════════════════════════════ */
+const PROJECTS = [
+  {
+    id: 'loom',
+    tags: ['SaaS','Fintech'],
+    tagClasses: ['ptag-c','ptag-v'],
+    year: '2024',
+    role: 'UI/UX Designer',
+    cover: 'https://mir-s3-cdn-cf.behance.net/projects/808/1b8ed1247324007.Y3JvcCwxMzk5LDEwOTUsMCww.png',
+    behance: 'https://www.behance.net/gallery/247324007/Loom-Business-Management-Financial-Ecosystem',
+    title: { en:'Loom — Business Management & Financial Ecosystem', ru:'Loom — Экосистема управления бизнесом', ua:'Loom — Екосистема управління бізнесом' },
+    sub:   { en:'SaaS · Fintech · Dashboard', ru:'SaaS · Финтех · Дашборд', ua:'SaaS · Фінтех · Дашборд' },
+    desc:  { en:'A comprehensive business management platform combining financial tracking, team collaboration and analytics into a single cohesive system.', ru:'Комплексная платформа управления бизнесом, объединяющая финансовый учёт, командное взаимодействие и аналитику.', ua:'Комплексна платформа управління бізнесом, що поєднує фінансовий облік, командну співпрацю та аналітику.' },
+  },
+  {
+    id: 'insurance',
+    tags: ['Enterprise','B2B'],
+    tagClasses: ['ptag-e','ptag-v'],
+    year: '2024',
+    role: 'UI/UX Designer',
+    cover: 'https://mir-s3-cdn-cf.behance.net/projects/808/6155fa244048479.Y3JvcCwxNDgyLDExNTksNjIsODA.png',
+    behance: 'https://www.behance.net/gallery/244048479/Insurance-Policy-Management-System-SaaS-Platform',
+    title: { en:'Insurance Policy Management System', ru:'Система управления страховыми полисами', ua:'Система управління страховими полісами' },
+    sub:   { en:'SaaS · Enterprise · B2B', ru:'SaaS · Энтерпрайз · B2B', ua:'SaaS · Ентерпрайз · B2B' },
+    desc:  { en:'Enterprise-grade SaaS platform for insurance policy management, built for complex B2B workflows with advanced filtering and reporting.', ru:'Корпоративная SaaS-платформа для управления страховыми полисами с расширенной фильтрацией и отчётностью.', ua:'Корпоративна SaaS-платформа для управління страховими полісами з розширеною фільтрацією та звітністю.' },
+  },
+  {
+    id: 'coursemaster',
+    tags: ['EdTech','LMS'],
+    tagClasses: ['ptag-a','ptag-c'],
+    year: '2024',
+    role: 'UI/UX Designer',
+    cover: 'https://mir-s3-cdn-cf.behance.net/projects/808/ebf967244973397.Y3JvcCwxNTczLDEyMzEsMTcxLDA.png',
+    behance: 'https://www.behance.net/gallery/244973397/CourseMaster-SaaS-Learning-Management-Platform',
+    title: { en:'CourseMaster — Learning Management Platform', ru:'CourseMaster — Платформа управления обучением', ua:'CourseMaster — Платформа управління навчанням' },
+    sub:   { en:'SaaS · EdTech · LMS', ru:'SaaS · EdTech · LMS', ua:'SaaS · EdTech · LMS' },
+    desc:  { en:'A modern Learning Management System designed for scale — intuitive course builder, progress tracking and deep analytics for instructors.', ru:'Современная LMS-система для масштаба — интуитивный конструктор курсов, отслеживание прогресса и аналитика.', ua:'Сучасна LMS-система для масштабу — інтуїтивний конструктор курсів, відстеження прогресу та аналітика.' },
+  },
+  {
+    id: 'barbershop',
+    tags: ['Brand','Redesign'],
+    tagClasses: ['ptag-v','ptag-e'],
+    year: '2024',
+    role: 'UI/UX Designer',
+    cover: 'https://mir-s3-cdn-cf.behance.net/projects/808/5d697a239468347.Y3JvcCwxNjAwLDEyNTEsMCwxNjY.png',
+    behance: 'https://www.behance.net/gallery/239468347/Dark-Premium-Barbershop-Website-Redesign',
+    title: { en:'Dark Premium Barbershop — Website Redesign', ru:'Barbershop — Редизайн сайта', ua:'Barbershop — Редизайн сайту' },
+    sub:   { en:'Web Design · Brand · Redesign', ru:'Веб-дизайн · Бренд · Редизайн', ua:'Веб-дизайн · Бренд · Редизайн' },
+    desc:  { en:'A dark editorial website redesign for a premium barbershop — elevating brand perception through bold typography and cinematic visuals.', ru:'Тёмный редакционный редизайн сайта премиального барбершопа с акцентом на типографику и кинематографичную подачу.', ua:'Темний редакційний редизайн сайту преміального барбершопу.' },
+  },
+  {
+    id: 'purley',
+    tags: ['E-commerce','Web'],
+    tagClasses: ['ptag-a','ptag-c'],
+    year: '2024',
+    role: 'UI/UX Designer',
+    cover: 'https://mir-s3-cdn-cf.behance.net/projects/808/8f0ff9241803821.Y3JvcCwxNDQwLDExMjYsMCww.png',
+    behance: 'https://www.behance.net/gallery/241803821/Purley-Natural-Skincare-Website-UIUX-Design',
+    title: { en:'Purley — Natural Skincare Website', ru:'Purley — Сайт натуральной косметики', ua:'Purley — Сайт натуральної косметики' },
+    sub:   { en:'Web Design · E-commerce · Beauty', ru:'Веб-дизайн · E-commerce · Бьюти', ua:'Веб-дизайн · E-commerce · Б\'юті' },
+    desc:  { en:'Clean and warm e-commerce design for a natural skincare brand — translating the brand values of purity and care into every interaction.', ru:'Чистый и тёплый e-commerce дизайн для бренда натуральной косметики с акцентом на ценности чистоты и заботы.', ua:'Чистий та теплий e-commerce дизайн для бренду натуральної косметики.' },
+  },
+];
+
+/* ══════════════════════════════════════════════
+   ✏️  РЕДАКТИРУЙ ЗДЕСЬ — переводы
+══════════════════════════════════════════════ */
+const LANG = {
+  en: {
+    nav_work:'Work', nav_about:'About', nav_contact:'Contact', nav_hire:'Hire me →',
+    hero_label:'UI/UX Designer · Open to projects',
+    hero_l1:'Complex', hero_l2:'products.', hero_l3:'Simple solutions.',
+    hero_desc:'I design interfaces for complex product systems and build visual identities for brands that need clarity.',
+    cta_work:'View work →', cta_about:'About me',
+    ticker_every:'Every time',
+    work_label:'Selected Work', work_title:'Projects', work_count:'05 projects',
+    photo_soon:'Photo coming soon',
+    about_label:'About me', about_title:'Designer who turns complexity into clarity',
+    about_p1:'I\'m a UI/UX designer equally confident working with complex product systems (dashboards, SaaS platforms) and visual identity for brands and websites.',
+    about_p2:'I care about interfaces that are understood at first glance — no instructions needed. My approach: precise grid, considered typography, solutions without visual noise.',
+    about_p3:'Beyond digital design, I\'m interested in composition in physical form — I work with balloon art installations, building balance of shape and colour in space.',
+    stat1:'projects in portfolio', stat2:'languages — EN · RU · UA', stat3:'attention to detail',
+    proc_label:'How I work', proc_title:'Four steps to clarity',
+    p1h:'Research & Structure', p1p:'I dive into the task and build product logic and architecture before the first screens.',
+    p2h:'Wireframes', p2p:'I think through interface behaviour before it becomes beautiful.',
+    p3h:'UI System', p3p:'I build the visual system: grid, typography, components and states.',
+    p4h:'Handoff & Polish', p4p:'I refine every detail and hand off to development without losing meaning.',
+    contact_label:'Ready to start?', ch1:"Let's", ch2:'bring', ch3:'order.',
+    f_name:'Your name', f_email:'Email', f_msg:'Message', f_send:'Send message →', f_note:'I reply within 24 hours',
+    footer_avail:'Available for Freelance & Fulltime',
+  },
+  ru: {
+    nav_work:'Работы', nav_about:'Обо мне', nav_contact:'Контакты', nav_hire:'Нанять →',
+    hero_label:'UI/UX Дизайнер · Открыта к проектам',
+    hero_l1:'Сложные', hero_l2:'продукты.', hero_l3:'Простые решения.',
+    hero_desc:'Проектирую интерфейсы для сложных продуктовых систем и выстраиваю визуальную идентичность для брендов, которым нужна ясность.',
+    cta_work:'Смотреть работы →', cta_about:'Обо мне',
+    ticker_every:'Каждый раз',
+    work_label:'Избранные работы', work_title:'Проекты', work_count:'05 проектов',
+    photo_soon:'Фото скоро появится',
+    about_label:'Обо мне', about_title:'Дизайнер, которая превращает сложное в простое',
+    about_p1:'Я — UI/UX дизайнер, которая одинаково уверенно работает и со сложными продуктовыми системами (дашборды, SaaS-платформы), и с визуальной идентичностью брендов и сайтов.',
+    about_p2:'Мне важно, чтобы интерфейс был понятен с первого взгляда — без лишних инструкций. В основе подхода — точная сетка, типографика и решения без визуального шума.',
+    about_p3:'Кроме цифрового дизайна интересуюсь композицией в материальной форме — занимаюсь аэродизайном, выстраивая баланс формы и цвета в пространстве.',
+    stat1:'проектов в портфолио', stat2:'языка — RU · EN · UA', stat3:'внимания к деталям',
+    proc_label:'Как я работаю', proc_title:'Четыре шага к ясности',
+    p1h:'Research & Structure', p1p:'Погружаюсь в задачу, выстраиваю логику и архитектуру продукта до первых экранов.',
+    p2h:'Wireframes', p2p:'Продумываю поведение интерфейса до того, как он станет красивым.',
+    p3h:'UI System', p3p:'Собираю визуальную систему: сетку, типографику, компоненты, состояния.',
+    p4h:'Handoff & Polish', p4p:'Довожу детали до точности и передаю в разработку без потерь смысла.',
+    contact_label:'Готовы начать?', ch1:'Давайте', ch2:'наведём', ch3:'порядок.',
+    f_name:'Ваше имя', f_email:'Email', f_msg:'Сообщение', f_send:'Отправить →', f_note:'Отвечаю в течение 24 часов',
+    footer_avail:'Открыта к фрилансу и full-time',
+  },
+  ua: {
+    nav_work:'Роботи', nav_about:'Про мене', nav_contact:'Контакти', nav_hire:'Найняти →',
+    hero_label:'UI/UX Дизайнер · Відкрита до проєктів',
+    hero_l1:'Складні', hero_l2:'продукти.', hero_l3:'Прості рішення.',
+    hero_desc:'Проєктую інтерфейси для складних продуктових систем і будую візуальну ідентичність для брендів, яким потрібна ясність.',
+    cta_work:'Дивитись роботи →', cta_about:'Про мене',
+    ticker_every:'Кожного разу',
+    work_label:'Вибрані роботи', work_title:'Проєкти', work_count:'05 проєктів',
+    photo_soon:'Фото незабаром',
+    about_label:'Про мене', about_title:'Дизайнер, яка перетворює складне на просте',
+    about_p1:'Я — UI/UX дизайнер, яка однаково впевнено працює зі складними продуктовими системами (дашборди, SaaS-платформи) та візуальною ідентичністю брендів і сайтів.',
+    about_p2:'Мені важливо, щоб інтерфейс був зрозумілий з першого погляду — без зайвих інструкцій. В основі підходу — точна сітка, типографіка й рішення без візуального шуму.',
+    about_p3:'Крім цифрового дизайну захоплююся композицією в матеріальній формі — займаюся аеродизайном, вибудовуючи баланс форми та кольору в просторі.',
+    stat1:'проєктів у портфоліо', stat2:'мови — UA · EN · RU', stat3:'уваги до деталей',
+    proc_label:'Як я працюю', proc_title:'Чотири кроки до ясності',
+    p1h:'Research & Structure', p1p:'Занурююсь у задачу, вибудовую логіку та архітектуру продукту до перших екранів.',
+    p2h:'Wireframes', p2p:'Продумую поведінку інтерфейсу до того, як він стане красивим.',
+    p3h:'UI System', p3p:'Збираю візуальну систему: сітку, типографіку, компоненти, стани.',
+    p4h:'Handoff & Polish', p4p:'Доводжу деталі до точності й передаю в розробку без втрат сенсу.',
+    contact_label:'Готові почати?', ch1:'Давайте', ch2:'наведемо', ch3:'порядок.',
+    f_name:"Ваше ім'я", f_email:'Email', f_msg:'Повідомлення', f_send:'Надіслати →', f_note:'Відповідаю протягом 24 годин',
+    footer_avail:'Відкрита до фрілансу та full-time',
+  }
+};
+
+/* ── LANGUAGE ── */
+let currentLang = 'en';
+function setLang(l) {
+  currentLang = l;
+  ['en','ru','ua'].forEach(x => document.getElementById('lb-'+x).classList.toggle('on', x===l));
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (LANG[l][k] !== undefined) el.textContent = LANG[l][k];
+  });
+  renderProjects();
+}
+
+/* ── RENDER PROJECTS ── */
+function renderProjects() {
+  const list = document.getElementById('proj-list');
+  list.innerHTML = PROJECTS.map((p,i) => `
+    <a class="proj-row rv" href="project.html?id=${p.id}" style="transition-delay:${i*.06}s">
+      <div class="proj-l">
+        <span class="proj-num">0${i+1}</span>
+        <div>
+          <div class="proj-name">${p.title[currentLang]||p.title.en}</div>
+          <div class="proj-sub">${p.sub[currentLang]||p.sub.en}</div>
+        </div>
+      </div>
+      <div class="proj-r">
+        ${p.tags.map((t,j)=>`<span class="ptag ${p.tagClasses[j]||'ptag-c'}">${t}</span>`).join('')}
+        <span class="proj-arr">→</span>
+      </div>
+    </a>
+  `).join('');
+  document.querySelectorAll('.proj-row').forEach(el => io.observe(el));
+}
+
+/* ── PRELOADER ── */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('pl').classList.add('out');
+    scrambleHero();
+  }, 1300);
+});
+
+/* ── SCROLL PROGRESS ── */
+const spb = document.getElementById('spb');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  spb.style.width = (h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+}, {passive:true});
+
+/* ── CURSOR ── */
+const cur = document.getElementById('cur');
+if (window.matchMedia('(hover:hover)').matches) {
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX+'px'; cur.style.top = e.clientY+'px';
+  }, {passive:true});
+  document.addEventListener('mouseover', e => {
+    cur.classList.toggle('big', !!e.target.closest('a,button,.pstep,.chip'));
+  });
+}
+
+/* ── SCRAMBLE ── */
+const CH = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+function scramble(el, txt, dur=800) {
+  let s=null;
+  (function frame(ts){
+    if(!s)s=ts;
+    const p=Math.min((ts-s)/dur,1), rev=Math.floor(p*txt.length);
+    el.textContent=txt.split('').map((c,i)=>c===' '?' ':i<rev?c:CH[Math.random()*CH.length|0]).join('');
+    if(p<1)requestAnimationFrame(frame); else el.textContent=txt;
+  })(performance.now());
+}
+function scrambleHero(){
+  document.querySelectorAll('.hero-title span').forEach((el,i)=>{
+    const t=el.textContent.trim(); el.textContent=t;
+    setTimeout(()=>scramble(el,t,750),i*180);
+  });
+}
+
+/* ── COUNTER ── */
+const cio = new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(!e.isIntersecting)return;
+    const el=e.target, n=parseInt(el.dataset.count), sf=el.dataset.suffix||'';
+    if(!n){cio.unobserve(el);return;}
+    let s=null;
+    (function f(ts){if(!s)s=ts;const p=Math.min((ts-s)/1200,1),ease=1-Math.pow(1-p,3);el.textContent=Math.floor(ease*n)+sf;if(p<1)requestAnimationFrame(f);else el.textContent=n+sf;})(performance.now());
+    cio.unobserve(el);
+  });
+},{threshold:.5});
+document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
+
+/* ── REVEALS ── */
+const io = new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+},{threshold:.08});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+/* ── INIT ── */
+renderProjects();
+</script>
+</body>
+</html>
