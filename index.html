@@ -189,15 +189,24 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;padding:0 40px;d
     height:56px;
   }
   .logo{
+    flex:1 1 auto;
+    min-width:0;
+    overflow:hidden;
+    gap:6px;
     font-size:14px;
-    gap:5px;
-    white-space:nowrap;
+  }
+  .logo-dot{
+    flex-shrink:0;
+  }
+  .logo-text{
     overflow:hidden;
     text-overflow:ellipsis;
-    max-width:38vw;
+    white-space:nowrap;
+    min-width:0;
   }
   .nav-c{
     gap:4px;
+    flex-shrink:0;
   }
   .nav-c a:not(.nav-cta){display:none;}
   .nav-cta{
@@ -216,13 +225,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;padding:0 40px;d
 }
 
 @media(max-width:400px){
-  .logo{
-    font-size:12px;
-    max-width:32vw;
-  }
-  .nav-cta{
-    padding:6px 10px;
-  }
+  .logo{font-size:12px;}
+  .nav-cta{padding:6px 10px;}
 }
    
 /* ── TICKER ── */
@@ -381,7 +385,7 @@ footer{border-top:1px solid var(--b);padding:18px 48px;display:flex;justify-cont
 
 <!-- ════ NAV ════ -->
 <nav>
-  <div class="logo"><span class="logo-dot"></span>Anastasiia Tarovska</div>
+<div class="logo"><span class="logo-dot"></span><span class="logo-text">Anastasiia Tarovska</span></div>
   <div class="nav-c">
     <a href="#work" data-i18n="nav_work">Work</a>
     <a href="#about" data-i18n="nav_about">About</a>
