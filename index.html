@@ -374,12 +374,18 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;padding:0 40px;d
 footer{border-top:1px solid var(--b);padding:18px 48px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--t3);flex-wrap:wrap;gap:8px;}
 @media(max-width:768px){footer{padding:16px 24px;}}
 
+#work, #about, #contact {
+  scroll-margin-top: 70px;
+}
 /* ── REVEALS ── */
 .rv{opacity:0;transform:translateY(18px);transition:opacity .65s ease,transform .65s ease;}
 .rv.in{opacity:1;transform:none;}
 .d1{transition-delay:.08s;}.d2{transition-delay:.16s;}.d3{transition-delay:.24s;}.d4{transition-delay:.32s;}
 @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;}}
 </style>
+<noscript>
+<style>body{cursor:auto !important;}</style>
+</noscript>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -529,6 +535,7 @@ footer{border-top:1px solid var(--b);padding:18px 48px;display:flex;justify-cont
       <!-- FORM -->
       <form id="contact-form" action="https://formspree.io/f/xgojrdpj" method="POST">
         <input type="hidden" name="_subject" value="New message from portfolio">
+        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
         <div class="form-group">
           <label data-i18n="f_name">Your name</label>
           <input type="text" name="name" placeholder="John Smith" required>
