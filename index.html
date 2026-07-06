@@ -189,20 +189,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;padding:0 40px;d
     height:56px;
   }
   .logo{
-    flex:1 1 auto;
-    min-width:0;
-    overflow:hidden;
     gap:6px;
-    font-size:14px;
   }
   .logo-dot{
-    flex-shrink:0;
+    display:none;
   }
   .logo-text{
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    min-width:0;
+    display:none;
+  }
+  .logo-short{
+    display:inline-flex;
+    font-size:22px;
   }
   .nav-c{
     gap:4px;
@@ -222,11 +219,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;padding:0 40px;d
     padding:4px 6px;
     font-size:9px;
   }
-}
-
-@media(max-width:400px){
-  .logo{font-size:12px;}
-  .nav-cta{padding:6px 10px;}
 }
    
 /* ── TICKER ── */
@@ -385,7 +377,11 @@ footer{border-top:1px solid var(--b);padding:18px 48px;display:flex;justify-cont
 
 <!-- ════ NAV ════ -->
 <nav>
-<div class="logo"><span class="logo-dot"></span><span class="logo-text">Anastasiia Tarovska</span></div>
+<div class="logo">
+  <span class="logo-dot"></span>
+  <span class="logo-text">Anastasiia Tarovska</span>
+  <span class="logo-short" aria-hidden="true">A<span class="ls-dot">.</span>T<span class="ls-dot">.</span></span>
+</div>
   <div class="nav-c">
     <a href="#work" data-i18n="nav_work">Work</a>
     <a href="#about" data-i18n="nav_about">About</a>
